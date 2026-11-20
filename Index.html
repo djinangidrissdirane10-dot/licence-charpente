@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merci pour votre achat — Express Construction Bois</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #131a26;
+      --border: #233044;
+      --text: #f3f6fb;
+      --muted: #9fb0c7;
+      --accent: #22c55e;
+      --accent-hover: #16a34a;
+      --accent-2: #38bdf8;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #152238 0%, var(--bg) 65%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .status-box {
+      background: #0d131d;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 18px 14px;
+      margin-bottom: 18px;
+    }
+
+    .status-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .code-display {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--accent-2);
+      user-select: all;
+      word-break: break-word;
+    }
+
+    .loading-text {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .error-text {
+      color: var(--danger);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    button, a.btn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.12s ease, background-color 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:active, a.btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-copy {
+      background: var(--accent);
+      color: #06210f;
+    }
+
+    .btn-copy:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-retry {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-app {
+      background: transparent;
+      color: var(--accent-2);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .steps {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .steps strong {
+      color: var(--text);
+    }
+
+    .steps ol {
+      padding-left: 18px;
+      margin-top: 6px;
+    }
+
+    .steps li {
+      margin-bottom: 4px;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">Paiement &amp; Licence</div>
+    <h1>Merci pour votre achat !</h1>
+    <p class="subtitle">
+      Votre licence pour l'outil de devis de charpente <strong>Express Construction Bois</strong> est en cours de préparation.
+    </p>
+
+    <section class="status-box" aria-live="polite">
+      <div class="status-label" id="statusLabel">Vérification du paiement</div>
+      <div id="codeArea">
+        <p class="loading-text">Récupération de votre code d'activation en cours...</p>
+      </div>
+    </section>
+
+    <div class="btn-group">
+      <button type="button" class="btn-copy" id="copyBtn" disabled>
+        Copier le code
+      </button>
+      <button type="button" class="btn-retry" id="retryBtn" style="display: none;">
+        Réessayer la vérification
+      </button>
+      <!-- Optionnel : remplace "#" par un lien de téléchargement APK si besoin -->
+      <a href="#" class="btn btn-app" id="appLink" style="display: none;">
+        Télécharger l'application (.apk)
+      </a>
+    </div>
+
+    <div class="steps">
+      <strong>Comment activer votre application :</strong>
+      <ol>
+        <li>Appuyez sur <strong>Copier le code</strong> ci-dessus.</li>
+        <li>Retournez dans l'application installée sur votre téléphone.</li>
+        <li>Collez le code avec <strong>Internet activé</strong> puis appuyez sur <strong>ACTIVER</strong>.</li>
+        <li>Une fois activée, l'application fonctionne <strong>100 % hors ligne</strong> sur ce téléphone.</li>
+      </ol>
+    </div>
+
+    <p class="footer-note">
+      Astuce : faites une capture d'écran de cette page. Chaque code est valable pour un seul appareil.
+    </p>
+  </main>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION À ADAPTER :
+    // Remplace ENDPOINT_URL par l'URL de ta Supabase Edge Function ou ton API
+    // qui vérifie la référence de paiement et renvoie :
+    //   { "success": true, "code": "ECB-XXXX-XXXX" }
+    // ou en cas d'attente :
+    //   { "success": false, "pending": true, "message": "Paiement en cours de confirmation..." }
+    // =========================================================================
+    const CONFIG = {
+      ENDPOINT_URL: "https://bmmmfbuakdfiypdpndjc.supabase.co/functions/v1/get-license-by-ref",
+      MAX_POLL_ATTEMPTS: 8,
+      POLL_INTERVAL_MS: 2500
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const refParam = (params.get("ref") || "").trim();
+    const directCodeParam = (params.get("code") || "").trim().toUpperCase();
+
+    const statusLabel = document.getElementById("statusLabel");
+    const codeArea = document.getElementById("codeArea");
+    const copyBtn = document.getElementById("copyBtn");
+    const retryBtn = document.getElementById("retryBtn");
+
+    let currentCode = "";
+    let pollCount = 0;
+    let pollTimer = null;
+
+    function setCodeReady(code) {
+      currentCode = code.trim().toUpperCase();
+      statusLabel.textContent = "Votre code d'activation";
+      codeArea.innerHTML = `<div class="code-display" id="licenseCodeText">${escapeHtml(currentCode)}</div>`;
+      copyBtn.disabled = false;
+      copyBtn.textContent = "Copier le code";
+      retryBtn.style.display = "none";
+    }
+
+    function setLoadingMessage(message, label = "Vérification en cours") {
+      currentCode = "";
+      statusLabel.textContent = label;
+      codeArea.innerHTML = `<p class="loading-text">${escapeHtml(message)}</p>`;
+      copyBtn.disabled = true;
+    }
+
+    function setErrorMessage(message, showRetry = true) {
+      currentCode = "";
+      statusLabel.textContent = "Information";
+      codeArea.innerHTML = `<p class="error-text">${escapeHtml(message)}</p>`;
+      copyBtn.disabled = true;
+      retryBtn.style.display = showRetry ? "inline-flex" : "none";
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function fetchLicenseCode() {
+      clearTimeout(pollTimer);
+
+      // Cas 1 : un code est déjà passé directement en paramètre (?code=ECB-XXXX-XXXX)
+      if (directCodeParam) {
+        setCodeReady(directCodeParam);
+        return;
+      }
+
+      // Cas 2 : aucune référence de commande trouvée dans l'URL
+      if (!refParam) {
+        setErrorMessage(
+          "Référence de commande manquante. Veuillez lancer l'achat depuis le bouton « Acheter une licence » dans l'application.",
+          false
+        );
+        return;
+      }
+
+      pollCount += 1;
+      setLoadingMessage(
+        `Confirmation de la transaction (${refParam})...`,
+        `Vérification (${pollCount}/${CONFIG.MAX_POLL_ATTEMPTS})`
+      );
+
+      try {
+        const url = new URL(CONFIG.ENDPOINT_URL);
+        url.searchParams.set("ref", refParam);
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok && data && data.success && data.code) {
+          setCodeReady(data.code);
+          return;
+        }
+
+        // Si le paiement Mobile Money est encore en cours de traitement
+        if (data && data.pending && pollCount < CONFIG.MAX_POLL_ATTEMPTS) {
+          setLoadingMessage(
+            data.message || "Paiement en cours de confirmation sur votre téléphone...",
+            "En attente de validation"
+          );
+          pollTimer = setTimeout(fetchLicenseCode, CONFIG.POLL_INTERVAL_MS);
+          return;
+        }
+
+        setErrorMessage(
+          (data && data.message) ||
+          "Impossible de récupérer le code pour le moment. Si vous venez de payer, patientez quelques secondes puis réessayez.",
+          true
+        );
+      } catch (err) {
+        if (pollCount < CONFIG.MAX_POLL_ATTEMPTS) {
+          pollTimer = setTimeout(fetchLicenseCode, CONFIG.POLL_INTERVAL_MS);
+        } else {
+          setErrorMessage(
+            "Erreur réseau lors de la vérification du paiement. Vérifiez votre connexion internet et réessayez.",
+            true
+          );
+        }
+      }
+    }
+
+    copyBtn.addEventListener("click", async () => {
+      if (!currentCode) return;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(currentCode);
+        } else {
+          const tempInput = document.createElement("input");
+          tempInput.value = currentCode;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand("copy");
+          document.body.removeChild(tempInput);
+        }
+
+        copyBtn.textContent = "Code copié !";
+        setTimeout(() => {
+          if (currentCode) {
+            copyBtn.textContent = "Copier le code";
+          }
+        }, 2500);
+      } catch (e) {
+        copyBtn.textContent = "Sélectionnez et copiez le code";
+      }
+    });
+
+    retryBtn.addEventListener("click", () => {
+      pollCount = 0;
+      fetchLicenseCode();
+    });
+
+    // Démarrage automatique au chargement de la page
+    fetchLicenseCode();
+  </script>
+</body>
+</html>
