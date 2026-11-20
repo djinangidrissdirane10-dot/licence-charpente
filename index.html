@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Licence — Express Construction Bois</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #111827;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #ffffff;
+      max-width: 480px;
+      width: 100%;
+      padding: 28px 24px;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+    .badge {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+    .subtitle {
+      margin: 0 0 20px 0;
+      font-size: 14px;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .price-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .price-label {
+      font-size: 14px;
+      color: #334155;
+      font-weight: 600;
+    }
+    .price-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: #15803d;
+    }
+    label {
+      display: block;
+      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 6px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: #15803d;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #15803d;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover:not(:disabled) {
+      background: #166534;
+    }
+    button:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+      text-align: center;
+    }
+    .status.error {
+      color: #b91c1c;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 12px;
+      background: #f0fdf4;
+      border: 2px solid #86efac;
+      text-align: center;
+      display: none;
+    }
+    .result-title {
+      font-size: 14px;
+      color: #166534;
+      font-weight: 600;
+    }
+    .license-code {
+      font-family: 'Courier New', monospace;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #14532d;
+      background: #ffffff;
+      border: 1px dashed #22c55e;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 12px 0;
+      user-select: all;
+    }
+    .copy-btn {
+      margin-top: 8px;
+      background: #0f172a;
+    }
+    .copy-btn:hover {
+      background: #1e293b;
+    }
+    .footer-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">Express Construction Bois</span>
+    <h1>Activation Licence Charpente</h1>
+    <p class="subtitle">
+      Obtenez immédiatement votre clé d'activation officielle par paiement Mobile Money (MTN / Orange).
+    </p>
+
+    <div id="buy-section">
+      <div class="price-box">
+        <span class="price-label">Licence complète (1 appareil)</span>
+        <span class="price-value" id="priceDisplay">5 000 FCFA</span>
+      </div>
+
+      <label for="clientName">Votre nom ou entreprise</label>
+      <input id="clientName" type="text" placeholder="Ex. Jean Kamga" />
+
+      <label for="clientEmail">Votre adresse e-mail</label>
+      <input id="clientEmail" type="email" placeholder="client@exemple.com" />
+
+      <button id="payBtn" type="button">Payer maintenant via Mobile Money</button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div id="resultBox" class="result-box">
+      <div class="result-title">Paiement confirmé ! Votre code de licence :</div>
+      <div id="licenseCode" class="license-code"></div>
+      <button id="copyBtn" class="copy-btn" type="button">Copier le code</button>
+    </div>
+
+    <div class="footer-note">
+      Express Construction Bois — Bafoussam, Cameroun
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      ENDPOINT_URL:
+        "https://bmmmfbuakdfiypdpndjc.supabase.co/functions/v1/notchpay-license",
+      CALLBACK_BASE:
+        "https://djinangidrissdirane10-dot.github.io/licence-charpente/",
+      AMOUNT: 5000,
+      CURRENCY: "XAF",
+      DESCRIPTION: "Licence Application Devis Charpente"
+    };
+
+    const buySection = document.getElementById("buy-section");
+    const payBtn = document.getElementById("payBtn");
+    const statusEl = document.getElementById("status");
+    const resultBox = document.getElementById("resultBox");
+    const licenseCodeEl = document.getElementById("licenseCode");
+    const copyBtn = document.getElementById("copyBtn");
+    const priceDisplay = document.getElementById("priceDisplay");
+
+    priceDisplay.textContent = `${CONFIG.AMOUNT.toLocaleString("fr-FR")} FCFA`;
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.className = isError ? "status error" : "status";
+    }
+
+    function showLicense(code) {
+      buySection.style.display = "none";
+      setStatus("");
+      licenseCodeEl.textContent = code;
+      resultBox.style.display = "block";
+    }
+
+    async function checkPaymentRef(ref, attempt = 1) {
+      setStatus("Vérification du paiement auprès de NotchPay en cours...");
+      try {
+        const res = await fetch(
+          `${CONFIG.ENDPOINT_URL}?ref=${encodeURIComponent(ref)}`
+        );
+        const data = await res.json();
+
+        if (data.success && data.code) {
+          showLicense(data.code);
+          return;
+        }
+
+        if (data.pending && attempt <= 15) {
+          setStatus(
+            `Paiement en attente de confirmation (${attempt}/15)... Nouvelle vérification dans 4 secondes.`
+          );
+          setTimeout(() => checkPaymentRef(ref, attempt + 1), 4000);
+          return;
+        }
+
+        setStatus(
+          data.error ||
+            "Le paiement n'est pas encore confirmé. Rechargez la page dans quelques instants.",
+          true
+        );
+      } catch (err) {
+        setStatus(
+          "Erreur de connexion lors de la vérification. Vérifiez votre réseau et rechargez la page.",
+          true
+        );
+      }
+    }
+
+    payBtn.addEventListener("click", async () => {
+      const name = document.getElementById("clientName").value.trim() || "Client";
+      const email =
+        document.getElementById("clientEmail").value.trim() ||
+        "client@expressconstructionbois.cm";
+
+      const reference = `ECB-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      const callback = `${CONFIG.CALLBACK_BASE}?ref=${encodeURIComponent(reference)}`;
+
+      payBtn.disabled = true;
+      setStatus("Connexion à la passerelle de paiement...");
+
+      try {
+        const res = await fetch(CONFIG.ENDPOINT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: CONFIG.AMOUNT,
+            currency: CONFIG.CURRENCY,
+            reference,
+            callback,
+            name,
+            email,
+            description: CONFIG.DESCRIPTION
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.authorization_url) {
+          window.location.href = data.authorization_url;
+        } else {
+          payBtn.disabled = false;
+          setStatus(
+            data.error || "Impossible d'initialiser le paiement NotchPay.",
+            true
+          );
+        }
+      } catch (err) {
+        payBtn.disabled = false;
+        setStatus("Erreur réseau lors de l'appel au serveur.", true);
+      }
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const code = licenseCodeEl.textContent.trim();
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code);
+        copyBtn.textContent = "Code copié !";
+        setTimeout(() => {
+          copyBtn.textContent = "Copier le code";
+        }, 2500);
+      } catch {
+        copyBtn.textContent = "Sélectionnez et copiez le code ci-dessus";
+      }
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const refParam = params.get("ref");
+    if (refParam) {
+      buySection.style.display = "none";
+      checkPaymentRef(refParam);
+    }
+  </script>
+</body>
+</html>
